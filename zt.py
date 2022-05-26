@@ -16,6 +16,7 @@ baseurl = "https://zawodtyper.pl/"
 
 value_bets_list = []
 less_value_bets_list = []
+recent_bets_list = []
 
 pages = []
 
@@ -43,7 +44,7 @@ for page in pages:
     s = HTMLSession()
     r = s.get(page)
 
-    r.html.render(wait=2)
+    r.html.render(wait=4)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
     bets = soup.find_all(
@@ -65,7 +66,7 @@ for page in pages:
                 'author': bet.find('a', class_="block w-[calc(100%_-_75px)] max-w-fit text-ellipsis whitespace-nowrap overflow-hidden !no-underline leading-[1.2] !text-text hover:!text-text-darker").span.text
 
             }
-            if str(today) in page:
+            if str(today) in str(page):
                 bet_start_time = timedelta(hours=int(formatted_bet['start'][:2]), minutes=int(
                     formatted_bet['start'][3:]), seconds=0)
 
@@ -77,7 +78,7 @@ for page in pages:
                         less_value_bets_list.append(formatted_bet)
                         print("Less value bet added")
                 else:
-                    print("Bet already started")
+                    recent_bets_list.append(formatted_bet)
             else:
                 if int(formatted_bet.get('effective')[0]) > 6:
                     value_bets_list.append(formatted_bet)
@@ -86,14 +87,13 @@ for page in pages:
                     less_value_bets_list.append(formatted_bet)
                     print("Less value bet added")
         except:
-            pass
+            print("Something went wrong")
 
 if not os.path.exists('zt'):
     os.mkdir('zt')
 
 
 if len(value_bets_list) > 0:
-
     df = pd.DataFrame(value_bets_list)
     df.to_csv(f'zt/{today}-zawodtyper_value_bets.csv', index=False)
 
@@ -101,5 +101,9 @@ if len(value_bets_list) > 0:
 if len(less_value_bets_list) > 0:
     df = pd.DataFrame(less_value_bets_list)
     df.to_csv(f'zt/{today}-zawodtyper_less_value_bets.csv', index=False)
+
+if len(recent_bets_list) > 0:
+    df = pd.DataFrame(recent_bets_list)
+    df.to_csv(f'zt/{today}-zawodtyper_recent_bets.csv', index=False)
 
 print(f"Scraped {str(found_pages_to_scrap)} pages")
