@@ -1,15 +1,16 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from requests_html import HTMLSession
 import re
+import os
 
 today = date.today().day
 tomorrow = today + 1
-now = datetime.now().strftime("%H:%M")
 
-
+now = datetime.now().time().strftime("%H:%M")
+now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 
 baseurl = "https://zawodtyper.pl/"
 
@@ -24,7 +25,10 @@ soup = BeautifulSoup(r.content, 'lxml')
 links = soup.find(
     'section', class_='typy-dnia-glowna only-desktop pt-12 pb-16 bg-prime').find_all('a')
 
+found_pages_to_scrap = 0
+
 for link in links:
+
     href = link.get('href')
     if str(href)[0] != '/':
         if str(today) in href or str(tomorrow) in href:
@@ -34,10 +38,12 @@ for link in links:
 pages = list(dict.fromkeys(pages))
 
 for page in pages:
+    print(page)
+    found_pages_to_scrap += 1
     s = HTMLSession()
     r = s.get(page)
 
-    r.html.render()
+    r.html.render(wait=2)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
     bets = soup.find_all(
@@ -59,19 +65,41 @@ for page in pages:
                 'author': bet.find('a', class_="block w-[calc(100%_-_75px)] max-w-fit text-ellipsis whitespace-nowrap overflow-hidden !no-underline leading-[1.2] !text-text hover:!text-text-darker").span.text
 
             }
-            if int(formatted_bet.get('effective')[0]) > 5:
-                value_bets_list.append(formatted_bet)
-            else:
-                less_value_bets_list.append(formatted_bet)
+            if str(today) in page:
+                bet_start_time = timedelta(hours=int(formatted_bet['start'][:2]), minutes=int(
+                    formatted_bet['start'][3:]), seconds=0)
 
+                if (bet_start_time - now).total_seconds() > 0:
+                    if int(formatted_bet.get('effective')[0]) > 6:
+                        value_bets_list.append(formatted_bet)
+                        print("Value bet added")
+                    else:
+                        less_value_bets_list.append(formatted_bet)
+                        print("Less value bet added")
+                else:
+                    print("Bet already started")
+            else:
+                if int(formatted_bet.get('effective')[0]) > 6:
+                    value_bets_list.append(formatted_bet)
+                    print("Value bet added")
+                else:
+                    less_value_bets_list.append(formatted_bet)
+                    print("Less value bet added")
         except:
             pass
 
+if not os.path.exists('zt'):
+    os.mkdir('zt')
+
+
 if len(value_bets_list) > 0:
+
     df = pd.DataFrame(value_bets_list)
-    df.to_csv('zawodtyper_value_bets.csv', index=False)
+    df.to_csv(f'zt/{today}-zawodtyper_value_bets.csv', index=False)
 
 
 if len(less_value_bets_list) > 0:
     df = pd.DataFrame(less_value_bets_list)
-    df.to_csv('zawodtyper_less_value_bets.csv', index=False)
+    df.to_csv(f'zt/{today}-zawodtyper_less_value_bets.csv', index=False)
+
+print(f"Scraped {str(found_pages_to_scrap)} pages")
