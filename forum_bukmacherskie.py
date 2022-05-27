@@ -35,8 +35,6 @@ def get_user_points(username):
     return 0
 
 
-print(get_user_points("fazer77"))
-
 read_file.to_csv('typerzy.csv', index=None, header=True)
 
 today = date.today().day
@@ -59,7 +57,6 @@ for link in all_links:
 
 pages_to_scrap = list(dict.fromkeys(pages_to_scrap))
 
-print(pages_to_scrap)
 
 baseurl = "https://forum.bukmacherskie.com"
 for page in pages_to_scrap:
