@@ -1,10 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 from datetime import date, datetime, timedelta
 from requests_html import HTMLSession
 import re
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from dotenv import load_dotenv, find_dotenv
 
 today = date.today().day
 tomorrow = today + 1
@@ -114,25 +117,56 @@ for page in pages:
                     value_bets_list.append(formatted_bet)
                 else:
                     less_value_bets_list.append(formatted_bet)
-            else:
-                recent_bets_list.append(formatted_bet)
         else:
             if int(formatted_bet.get('effective')[0]) > 6:
                 value_bets_list.append(formatted_bet)
             else:
                 less_value_bets_list.append(formatted_bet)
 
-if not os.path.exists('zt'):
-    os.mkdir('zt')
 
-if len(value_bets_list) > 0:
-    df = pd.DataFrame(value_bets_list)
-    df.to_csv(f'zt/{today}-zawodtyper_value_bets.csv', index=False)
+load_dotenv(find_dotenv())
 
-if len(less_value_bets_list) > 0:
-    df = pd.DataFrame(less_value_bets_list)
-    df.to_csv(f'zt/{today}-zawodtyper_less_value_bets.csv', index=False)
+smtp_server = "smtp.gmail.com"
+sender_address = os.getenv("SENDER_ADDRESS")
+sender_pass = os.getenv("SENDER_PASS")
+receiver_address = os.getenv("RECEIVER_ADDRESS")
 
-if len(recent_bets_list) > 0:
-    df = pd.DataFrame(recent_bets_list)
-    df.to_csv(f'zt/{today}-zawodtyper_recent_bets.csv', index=False)
+message = MIMEMultipart('alternative')
+message['From'] = sender_address
+message['To'] = receiver_address
+message['Subject'] = f'Bets - Zawód Typer - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
+
+
+html = """\
+<html>
+  <body>
+    <table>
+      <tbody>
+        {}
+      </tbody>
+    </table>
+    <table>
+      <tbody>
+        {}
+      </tbody>
+    </table>
+  </body>
+</html>
+"""
+value_message_to_send = ""
+less_value_message_to_send = ""
+for bet in value_bets_list:
+    value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+for bet in less_value_bets_list:
+    less_value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+
+html = html.format(value_message_to_send, less_value_message_to_send)
+
+message.attach(MIMEText(html, 'html'))
+
+session = smtplib.SMTP('smtp.gmail.com', 587)
+session.starttls()
+session.login(sender_address, sender_pass)
+text = message.as_string()
+session.sendmail(sender_address, receiver_address, text)
+session.quit()
