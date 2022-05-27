@@ -35,11 +35,9 @@ for link in links:
         if str(today) in href or str(tomorrow) in href:
             pages.append(href)
 
-
 pages = list(dict.fromkeys(pages))
 
 for page in pages:
-    print(page)
     found_pages_to_scrap += 1
     s = HTMLSession()
     r = s.get(page)
@@ -50,8 +48,6 @@ for page in pages:
     bets = soup.find_all(
         'div', id=re.compile("^typ-"), class_="relative")
 
-    print(bets)
-
     for bet in bets:
 
         fields = bet.find_all("fieldset")
@@ -61,27 +57,22 @@ for page in pages:
                 'div', class_="absolute top-0 right-[30px] bg-body-lighter shadow shadow-prime-darker rounded-b-md p-1 lg:right-[58px] overflow-hidden after:only-mobile after:absolute after:bg-white after:w-[10%] after:h-full after:top-0 after:right-[150px] after:animate-[like-shine_24s_ease-in-out_infinite] after:blur after:skew-x-12 after:transition-transform").find('p', class_="text-[12px] px-1 text-center font-bold lg:text-[14px]").text
         except:
             effective = ""
-
         try:
             dyscipline = fields[0].div.text,
         except:
             dyscipline = ""
-
         try:
             match = fields[1].div.text
         except:
             match = ""
-
         try:
             prediction = fields[2].div.text
         except:
             prediction = ""
-
         try:
             odds = fields[3].div.text
         except:
             odds = ""
-
         try:
             start = fields[4].div.text
         except:
@@ -96,7 +87,6 @@ for page in pages:
             content = bet.find('div', id=re.compile("^content")).text
         except:
             content = ""
-
         try:
             author = bet.find(
                 'a', class_="block w-[calc(100%_-_75px)] max-w-fit text-ellipsis whitespace-nowrap overflow-hidden !no-underline leading-[1.2] !text-text hover:!text-text-darker").span.text
@@ -132,15 +122,12 @@ for page in pages:
             else:
                 less_value_bets_list.append(formatted_bet)
 
-
 if not os.path.exists('zt'):
     os.mkdir('zt')
-
 
 if len(value_bets_list) > 0:
     df = pd.DataFrame(value_bets_list)
     df.to_csv(f'zt/{today}-zawodtyper_value_bets.csv', index=False)
-
 
 if len(less_value_bets_list) > 0:
     df = pd.DataFrame(less_value_bets_list)
@@ -149,5 +136,3 @@ if len(less_value_bets_list) > 0:
 if len(recent_bets_list) > 0:
     df = pd.DataFrame(recent_bets_list)
     df.to_csv(f'zt/{today}-zawodtyper_recent_bets.csv', index=False)
-
-print(f"Scraped {str(found_pages_to_scrap)} pages")
