@@ -45,7 +45,7 @@ for page in pages:
     s = HTMLSession()
     r = s.get(page)
 
-    r.html.render(wait=8)
+    r.html.render(wait=30, timeout=70)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
     bets = soup.find_all(
