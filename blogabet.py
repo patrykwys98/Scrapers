@@ -46,7 +46,7 @@ for link in all_links:
 
 
 for link in links_to_scrap:
-    sleep_time = random.randint(10, 30)
+    sleep_time = random.randint(5, 30)
     r = s.get(link)
     r.html.render(timeout=70, sleep=sleep_time)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -60,10 +60,20 @@ for link in links_to_scrap:
                 user_container = b.find("div", class_="feed-avatar")
                 username = user_container.find("a").get("title").strip()
                 user_yield = user_container.find(
-                    "span", class_="u-dp data-info").text.strip().replace("\n", "")
+                    "span", class_="u-dp data-info").text.strip().replace("\n", "").replace(" ", "")
+                tips_count = user_yield[user_yield.find(
+                    "(")+1:user_yield.find(")")]
+                tips_effective = user_yield[:user_yield.find("%")]
+                if tips_effective[0] == "-" or tips_effective[0] == "0" or tips_effective[0] == "+0" or username == "":
+                    continue
+                else:
+                    if int(tips_effective.replace("+", "")) < 10 or int(tips_count) < 80:
+                        continue
+
+                odd = b.find("span", class_="feed-odd").text.strip()
             except:
                 continue
-            odd = b.find("span", class_="feed-odd").text.strip()
+
             if "combo-pick" in link:
                 combo_table = b.find("table", class_="table combo-table")
                 combo_table_rows = combo_table.find_all("td")
@@ -83,27 +93,29 @@ for link in links_to_scrap:
             #         "div", class_="feed-pick-title").find("p").text.strip()
             # except:
             #     content = ""
-            start_time = start.split(',')
-            start_time = start_time[1]
-            start_time = start_time.replace(' ', "").split(':')
-            bet_start_time = timedelta(hours=int(start_time[0])+2, minutes=int(
-                start_time[1]), seconds=0)
-            if not "-" in user_yield or user_yield.startswith("0") != True:
-                if not "combo-pick" in link:
-                    if not "ago" in start:
-                        if str(today) in start:
-                            if bet_start_time > now:
-                                bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                                  "odd": odd, "start": f"Today: {bet_start_time}"})
-                        elif str(tomorrow) in start:
+            if not "combo-pick" in link:
+                if not "ago" in start:
+                    if str(today) in start:
+                        start_time = start.split(',')
+                        start_time = start_time[1]
+                        start_time = start_time.replace(
+                            ' ', "").split(':')
+                        bet_start_time = timedelta(hours=int(start_time[0])+2, minutes=int(
+                            start_time[1]), seconds=0)
+                        print(bet_start_time)
+                        if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                              "odd": odd, "start": f"Tomorrow: {bet_start_time}"})
-                            print("tomorrow added", bets_list)
-                else:
-                    bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                      "odd": odd, "start": start})
+                                              "odd": odd, "start": start})
+                        else:
+                            continue
+                    elif str(tomorrow) in start:
+                        bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
+                                          "odd": odd, "start": start})
+                        print("tomorrow added", bets_list)
             else:
-                continue
+                bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
+                                  "odd": odd, "start": start})
+
 
 bets_list = sorted(bets_list, key=sortByYield, reverse=True)
 bets_list = [i for n, i in enumerate(bets_list) if i not in bets_list[n+1:]]
