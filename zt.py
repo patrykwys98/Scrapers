@@ -14,115 +14,124 @@ tomorrow = today + 1
 
 now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
-
-baseurl = "https://zawodtyper.pl/"
-
 value_bets_list = []
 less_value_bets_list = []
-recent_bets_list = []
 
-pages = []
 
-r = requests.get(baseurl)
-soup = BeautifulSoup(r.content, 'lxml')
+def scrap_zawod_typer():
+    baseurl = "https://zawodtyper.pl/"
 
-links = soup.find(
-    'section', class_='typy-dnia-glowna only-desktop pt-12 pb-16 bg-prime').find_all('a')
+    pages = []
 
-found_pages_to_scrap = 0
+    r = requests.get(baseurl)
+    soup = BeautifulSoup(r.content, 'lxml')
 
-for link in links:
+    links = soup.find(
+        'section', class_='typy-dnia-glowna only-desktop pt-12 pb-16 bg-prime').find_all('a')
 
-    href = link.get('href')
-    if str(href)[0] != '/':
-        if str(today) in href or str(tomorrow) in href:
-            pages.append(href)
+    found_pages_to_scrap = 0
 
-pages = list(dict.fromkeys(pages))
+    for link in links:
 
-for page in pages:
-    found_pages_to_scrap += 1
-    s = HTMLSession()
-    r = s.get(page)
+        href = link.get('href')
+        if str(href)[0] != '/':
+            if str(today) in href or str(tomorrow) in href:
+                pages.append(href)
 
-    r.html.render(wait=30, timeout=70)
-    soup = BeautifulSoup(r.html.raw_html, "html.parser")
+    pages = list(dict.fromkeys(pages))
 
-    bets = soup.find_all(
-        'div', id=re.compile("^typ-"), class_="relative")
+    for page in pages:
+        found_pages_to_scrap += 1
+        s = HTMLSession()
+        r = s.get(page)
 
-    for bet in bets:
+        r.html.render(wait=30, timeout=70)
+        soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
-        fields = bet.find_all("fieldset")
+        bets = soup.find_all(
+            'div', id=re.compile("^typ-"), class_="relative")
 
-        try:
-            effective = bet.find(
-                'div', class_="absolute top-0 right-[30px] bg-body-lighter shadow shadow-prime-darker rounded-b-md p-1 lg:right-[58px] overflow-hidden after:only-mobile after:absolute after:bg-white after:w-[10%] after:h-full after:top-0 after:right-[150px] after:animate-[like-shine_24s_ease-in-out_infinite] after:blur after:skew-x-12 after:transition-transform").find('p', class_="text-[12px] px-1 text-center font-bold lg:text-[14px]").text
-        except:
-            effective = ""
-        try:
-            dyscipline = fields[0].div.text,
-        except:
-            dyscipline = ""
-        try:
-            match = fields[1].div.text
-        except:
-            match = ""
-        try:
-            prediction = fields[2].div.text
-        except:
-            prediction = ""
-        try:
-            odds = fields[3].div.text
-        except:
-            odds = ""
-        try:
-            start = fields[4].div.text
-        except:
-            start = ""
+        for bet in bets:
 
-        try:
-            bukmacher = fields[5].div.text
-        except:
-            bukmacher = ""
+            fields = bet.find_all("fieldset")
 
-        try:
-            content = bet.find('div', id=re.compile("^content")).text
-        except:
-            content = ""
-        try:
-            author = bet.find(
-                'a', class_="block w-[calc(100%_-_75px)] max-w-fit text-ellipsis whitespace-nowrap overflow-hidden !no-underline leading-[1.2] !text-text hover:!text-text-darker").span.text
-        except:
-            author = ""
+            try:
+                effective = bet.find(
+                    'div', class_="absolute top-0 right-[30px] bg-body-lighter shadow shadow-prime-darker rounded-b-md p-1 lg:right-[58px] overflow-hidden after:only-mobile after:absolute after:bg-white after:w-[10%] after:h-full after:top-0 after:right-[150px] after:animate-[like-shine_24s_ease-in-out_infinite] after:blur after:skew-x-12 after:transition-transform").find('p', class_="text-[12px] px-1 text-center font-bold lg:text-[14px]").text
+            except:
+                effective = ""
+            try:
+                dyscipline = fields[0].div.text,
+            except:
+                dyscipline = ""
+            try:
+                match = fields[1].div.text
+            except:
+                match = ""
+            try:
+                prediction = fields[2].div.text
+            except:
+                prediction = ""
+            try:
+                odds = fields[3].div.text
+            except:
+                odds = ""
+            try:
+                start = fields[4].div.text
+            except:
+                start = ""
 
-        formatted_bet = {
-            'effective': effective,
-            'dyscipline':  dyscipline,
-            'match': match,
-            'prediction': prediction,
-            'odds': odds,
-            'start': start,
-            'bukmacher': bukmacher,
-            'content': content,
-            'author': author,
-        }
-        start_time = formatted_bet['start'].split(':')
-        if str(today) in str(page):
-            bet_start_time = timedelta(hours=int(start_time[0]), minutes=int(
-                start_time[1]), seconds=0)
+            try:
+                bukmacher = fields[5].div.text
+            except:
+                bukmacher = ""
 
-            if (bet_start_time - now).total_seconds() > 0:
+            try:
+                content = bet.find('div', id=re.compile("^content")).text
+            except:
+                content = ""
+            try:
+                author = bet.find(
+                    'a', class_="block w-[calc(100%_-_75px)] max-w-fit text-ellipsis whitespace-nowrap overflow-hidden !no-underline leading-[1.2] !text-text hover:!text-text-darker").span.text
+            except:
+                author = ""
+
+            formatted_bet = {
+                'effective': effective,
+                'dyscipline':  dyscipline,
+                'match': match,
+                'prediction': prediction,
+                'odds': odds,
+                'start': start,
+                'bukmacher': bukmacher,
+                'content': content,
+                'author': author,
+            }
+            start_time = formatted_bet['start'].split(':')
+            if str(today) in str(page):
+                bet_start_time = timedelta(hours=int(start_time[0]), minutes=int(
+                    start_time[1]), seconds=0)
+
+                if (bet_start_time - now).total_seconds() > 0:
+                    if int(formatted_bet.get('effective')[0]) > 6:
+                        value_bets_list.append(formatted_bet)
+                    else:
+                        less_value_bets_list.append(formatted_bet)
+            else:
                 if int(formatted_bet.get('effective')[0]) > 6:
                     value_bets_list.append(formatted_bet)
                 else:
                     less_value_bets_list.append(formatted_bet)
-        else:
-            if int(formatted_bet.get('effective')[0]) > 6:
-                value_bets_list.append(formatted_bet)
-            else:
-                less_value_bets_list.append(formatted_bet)
 
+
+tries = 0
+
+scrap_zawod_typer()
+
+if len(less_value_bets_list) + len(value_bets_list) == 0:
+    while tries < 5:
+        tries += 1
+        scrap_zawod_typer()
 
 load_dotenv(find_dotenv())
 
