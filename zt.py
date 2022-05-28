@@ -45,7 +45,7 @@ def scrap_zawod_typer():
         s = HTMLSession()
         r = s.get(page)
 
-        r.html.render(wait=30)
+        r.html.render(sleep=30)
         soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
         bets = soup.find_all(
