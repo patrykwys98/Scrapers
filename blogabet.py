@@ -27,8 +27,6 @@ now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 
 s = HTMLSession()
-s.set.params({'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
-             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'})
 r = s.get("https://blogabet.com/tips/")
 
 sleep_time = random.randint(10, 20)
@@ -85,22 +83,21 @@ for link in links_to_scrap:
             #         "div", class_="feed-pick-title").find("p").text.strip()
             # except:
             #     content = ""
-            if not "-" in user_yield or user_yield.startswith("0"):
+            start_time = start.split(',')
+            start_time = start_time[1]
+            start_time = start_time.replace(' ', "").split(':')
+            bet_start_time = timedelta(hours=int(start_time[0]), minutes=int(
+                start_time[1]), seconds=0)
+            if not "-" in user_yield or user_yield.startswith("0") != True:
                 if not "combo-pick" in link:
                     if not "ago" in start:
                         if str(today) in start:
-                            start_time = start.split(',')
-                            start_time = start_time[1]
-                            start_time = start_time.replace(' ', "").split(':')
-                            bet_start_time = timedelta(hours=int(start_time[0]), minutes=int(
-                                start_time[1]), seconds=0)
-                            print(bet_start_time)
                             if bet_start_time > now:
                                 bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                                  "odd": odd, "start": start})
+                                                  "odd": odd, "start": f"Today: {bet_start_time}"})
                         elif str(tomorrow) in start:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                              "odd": odd, "start": start})
+                                              "odd": odd, "start": f"Tomorrow: {bet_start_time}"})
                             print("tomorrow added", bets_list)
                 else:
                     bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
