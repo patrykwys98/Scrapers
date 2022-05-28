@@ -45,7 +45,7 @@ def scrap_zawod_typer():
         s = HTMLSession()
         r = s.get(page)
 
-        r.html.render(wait=30, timeout=70)
+        r.html.render(wait=30)
         soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
         bets = soup.find_all(
@@ -135,47 +135,47 @@ if len(less_value_bets_list) + len(value_bets_list) == 0:
 
 load_dotenv(find_dotenv())
 
-smtp_server = "smtp.gmail.com"
-sender_address = os.getenv("SENDER_ADDRESS")
-sender_pass = os.getenv("SENDER_PASS")
-receiver_address = os.getenv("RECEIVER_ADDRESS")
+if len(less_value_bets_list) + len(value_bets_list) > 0:
+    smtp_server = "smtp.gmail.com"
+    sender_address = os.getenv("SENDER_ADDRESS")
+    sender_pass = os.getenv("SENDER_PASS")
+    receiver_address = os.getenv("RECEIVER_ADDRESS")
 
-message = MIMEMultipart('alternative')
-message['From'] = sender_address
-message['To'] = receiver_address
-message['Subject'] = f'Bets - Zawód Typer - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
+    message = MIMEMultipart('alternative')
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = f'Bets - Zawód Typer - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
 
+    html = """\
+    <html>
+    <body>
+        <table>
+        <tbody>
+            {}
+        </tbody>
+        </table>
+        <table>
+        <tbody>
+            {}
+        </tbody>
+        </table>
+    </body>
+    </html>
+    """
+    value_message_to_send = ""
+    less_value_message_to_send = ""
+    for bet in value_bets_list:
+        value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+    for bet in less_value_bets_list:
+        less_value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
 
-html = """\
-<html>
-  <body>
-    <table>
-      <tbody>
-        {}
-      </tbody>
-    </table>
-    <table>
-      <tbody>
-        {}
-      </tbody>
-    </table>
-  </body>
-</html>
-"""
-value_message_to_send = ""
-less_value_message_to_send = ""
-for bet in value_bets_list:
-    value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
-for bet in less_value_bets_list:
-    less_value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+    html = html.format(value_message_to_send, less_value_message_to_send)
 
-html = html.format(value_message_to_send, less_value_message_to_send)
+    message.attach(MIMEText(html, 'html'))
 
-message.attach(MIMEText(html, 'html'))
-
-session = smtplib.SMTP('smtp.gmail.com', 587)
-session.starttls()
-session.login(sender_address, sender_pass)
-text = message.as_string()
-session.sendmail(sender_address, receiver_address, text)
-session.quit()
+    session = smtplib.SMTP('smtp.gmail.com', 587)
+    session.starttls()
+    session.login(sender_address, sender_pass)
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
