@@ -14,8 +14,11 @@ tomorrow = today + 1
 
 now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
-value_bets_list = []
-less_value_bets_list = []
+bets_list = []
+
+
+def sortByEffective(bet):
+    return bet['effective']
 
 
 def scrap_zawod_typer():
@@ -80,12 +83,10 @@ def scrap_zawod_typer():
                 start = fields[4].div.text
             except:
                 start = ""
-
             try:
                 bukmacher = fields[5].div.text
             except:
                 bukmacher = ""
-
             try:
                 content = bet.find('div', id=re.compile("^content")).text
             except:
@@ -111,31 +112,26 @@ def scrap_zawod_typer():
             if str(today) in str(page):
                 bet_start_time = timedelta(hours=int(start_time[0]), minutes=int(
                     start_time[1]), seconds=0)
-
                 if (bet_start_time - now).total_seconds() > 0:
-                    if int(formatted_bet.get('effective')[0]) > 6:
-                        value_bets_list.append(formatted_bet)
-                    else:
-                        less_value_bets_list.append(formatted_bet)
-            else:
-                if int(formatted_bet.get('effective')[0]) > 6:
-                    value_bets_list.append(formatted_bet)
-                else:
-                    less_value_bets_list.append(formatted_bet)
+                    bets_list.append(formatted_bet)
 
 
 tries = 0
 
 scrap_zawod_typer()
 
-if len(less_value_bets_list) + len(value_bets_list) == 0:
+if len(bets_list) == 0:
     while tries < 5:
+        if len(bets_list) > 0:
+            break
         tries += 1
         scrap_zawod_typer()
 
+bets_list.sort(key=sortByEffective, reverse=True)
+
 load_dotenv(find_dotenv())
 
-if len(less_value_bets_list) + len(value_bets_list) > 0:
+if len(bets_list) > 0:
     smtp_server = "smtp.gmail.com"
     sender_address = os.getenv("SENDER_ADDRESS")
     sender_pass = os.getenv("SENDER_PASS")
@@ -154,22 +150,14 @@ if len(less_value_bets_list) + len(value_bets_list) > 0:
             {}
         </tbody>
         </table>
-        <table>
-        <tbody>
-            {}
-        </tbody>
-        </table>
     </body>
     </html>
     """
-    value_message_to_send = ""
-    less_value_message_to_send = ""
-    for bet in value_bets_list:
-        value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
-    for bet in less_value_bets_list:
-        less_value_message_to_send += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+    bets_message = ""
+    for bet in bets_list:
+        bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
 
-    html = html.format(value_message_to_send, less_value_message_to_send)
+    html = html.format(bets_message)
 
     message.attach(MIMEText(html, 'html'))
 

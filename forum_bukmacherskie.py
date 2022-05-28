@@ -11,6 +11,10 @@ from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
 
 
+def sortByPoints(row):
+    return row['points']
+
+
 def clean_text(text, words_to_remove, word_to_replace="", lower=True):
     if lower:
         text = text.lower().strip()
@@ -118,6 +122,8 @@ for page in pages_to_scrap:
                 test.append(bet_to_append)
             else:
                 print("Old bet")
+
+test.sort(key=sortByPoints, reverse=True)
 
 
 load_dotenv(find_dotenv())
