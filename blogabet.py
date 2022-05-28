@@ -27,6 +27,8 @@ now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 
 s = HTMLSession()
+s.set.params({'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
+             'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36'})
 r = s.get("https://blogabet.com/tips/")
 
 sleep_time = random.randint(10, 20)
