@@ -86,7 +86,7 @@ for link in links_to_scrap:
             start_time = start.split(',')
             start_time = start_time[1]
             start_time = start_time.replace(' ', "").split(':')
-            bet_start_time = timedelta(hours=int(start_time[0]), minutes=int(
+            bet_start_time = timedelta(hours=int(start_time[0])+2, minutes=int(
                 start_time[1]), seconds=0)
             if not "-" in user_yield or user_yield.startswith("0") != True:
                 if not "combo-pick" in link:
