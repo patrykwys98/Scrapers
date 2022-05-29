@@ -28,7 +28,7 @@ s = HTMLSession()
 r = s.get("https://blogabet.com/tips/")
 
 sleep_time = random.randint(20, 30)
-
+print("Init after", sleep_time)
 r.html.render(timeout=70, sleep=sleep_time)
 soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
@@ -40,12 +40,18 @@ bets_list = []
 for link in all_links:
     href = link.get("href")
     if "blogabet.com/tips/" in href and not any(sport in link["href"] for sport in sports_to_exclude):
+        print("Added link to check:", link['href'])
         links_to_scrap.append(href)
+    else:
+        print("Skipping link:", link['href'])
+        continue
 
 
 for link in links_to_scrap:
+    print("Checking link: " + link)
     sleep_time = random.randint(10, 20)
     r = s.get(link)
+    print("Rendering after", sleep_time)
     r.html.render(timeout=70, sleep=sleep_time)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
@@ -100,26 +106,30 @@ for link in links_to_scrap:
                             ' ', "").split(':')
                         bet_start_time = timedelta(hours=int(start_time[0])+2, minutes=int(
                             start_time[1]), seconds=0)
-                        print("Bet start time", bet_start_time)
-                        print("Start time", start_time)
-                        print("Start", start)
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                               "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[0:2]), "start_time": str(bet_start_time)})
+                            print("Added Today Bet", start)
                         else:
                             continue
                     elif str(tomorrow) in start:
                         bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                           "odd": odd, "start": start})
+                        print("Added Tomorrow Bet", start)
+                    else:
+                        continue
             else:
                 bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                   "odd": odd, "start": start})
+                print("Added Combo Bet", start)
 
-
+print("Start sorting links")
 bets_list = sorted(bets_list, key=sortByYield, reverse=True)
+print("Start removing duplicates")
 bets_list = [i for n, i in enumerate(bets_list) if i not in bets_list[n+1:]]
 now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
+print("Actual time", str(now))
 
 bets_to_send = []
 for bet in bets_list:
@@ -145,6 +155,7 @@ bets_list = bets_to_send
 
 load_dotenv(find_dotenv())
 
+print("Start sending emails")
 smtp_server = "smtp.gmail.com"
 sender_address = os.getenv("SENDER_ADDRESS")
 sender_pass = os.getenv("SENDER_PASS")
@@ -183,3 +194,5 @@ session.login(sender_address, sender_pass)
 text = message.as_string()
 session.sendmail(sender_address, receiver_address, text)
 session.quit()
+
+print("End")
