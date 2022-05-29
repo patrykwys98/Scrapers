@@ -147,7 +147,7 @@ html = """\
 """
 
 for bet in bets_list:
-    message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('start')}</td></tr><tr><td colspan='6'>{bet.get('content')}</td></tr>"
+    message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('start')}</td></tr>"
 
 html = html.format(message_to_send)
 
