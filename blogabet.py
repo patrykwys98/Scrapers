@@ -28,7 +28,7 @@ now = time(int(now[:2]), int(now[3:]), 0)
 s = HTMLSession()
 r = s.get("https://blogabet.com/tips/")
 
-sleep_time = random.randint(5, 7)
+sleep_time = random.randint(10, 15)
 print("Init after", sleep_time)
 r.html.render(timeout=70, sleep=sleep_time)
 soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -50,7 +50,7 @@ for link in all_links:
 
 for link in links_to_scrap:
     print("Checking link: " + link)
-    sleep_time = random.randint(2, 3)
+    sleep_time = random.randint(9, 20)
     r = s.get(link)
     print("Rendering after", sleep_time)
     r.html.render(timeout=70, sleep=sleep_time)
@@ -105,8 +105,8 @@ for link in links_to_scrap:
                         start_time = start_time[1]
                         start_time = start_time.replace(
                             ' ', "").split(':')
-                        bet_start_time = time(int(start_time[0])+2,
-                                              int(start_time[1]), 0)
+                        bet_start_time = time(int(start_time[0])+2 if int(
+                            start_time[0]) < 22 else int(start_time[0])-22, int(start_time[1]), 0)
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                               "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[:2]), "start_time": bet_start_time.strftime("%H:%M")})
