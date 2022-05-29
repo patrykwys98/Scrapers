@@ -27,8 +27,7 @@ now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 s = HTMLSession()
 r = s.get("https://blogabet.com/tips/")
 
-sleep_time = random.randint(10, 20)
-sleep_time = 15
+sleep_time = random.randint(20, 30)
 
 r.html.render(timeout=70, sleep=sleep_time)
 soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -45,8 +44,7 @@ for link in all_links:
 
 
 for link in links_to_scrap:
-    sleep_time = random.randint(5, 30)
-    sleep_time = 10
+    sleep_time = random.randint(10, 20)
     r = s.get(link)
     r.html.render(timeout=70, sleep=sleep_time)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -94,7 +92,7 @@ for link in links_to_scrap:
             # except:
             #     content = ""
             if not "combo-pick" in link:
-                if not "ago" in start and not "live" in start:
+                if not "ago" in start and not "Livebet" in start:
                     if str(today) in start:
                         start_time = start.split(',')
                         start_time = start_time[1]
