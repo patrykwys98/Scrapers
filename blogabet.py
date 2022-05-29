@@ -10,10 +10,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
 
-sports_to_exclude = ["aussie-rules",
-                     "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
-                     "baseball", "motor-sports", "boxing", "futsal", "mma", "darts", "golf", "chess", "snooker",
-                     "cricket", "trotting", "other",
+sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
+                     "boxing", "futsal", "golf", "chess", "cricket", "trotting", "other",
                      ]
 
 
