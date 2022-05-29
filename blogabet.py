@@ -12,7 +12,9 @@ from dotenv import load_dotenv, find_dotenv
 
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
                      "boxing", "futsal", "golf", "chess", "cricket", "trotting", "other",
-                     #"volleyball", "tennis", "snooker", "basketball", "handball", "football", "ice-hockey",
+                     "volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
+                     "darts", "combo-pick", "e-sports",
+                     # "basketball",
                      ]
 
 
@@ -93,6 +95,12 @@ for link in links_to_scrap:
                                                                 class_="text-muted").text.replace("\n", "").strip().replace("Kick off:", "").replace("/                                 ", "")
             except:
                 continue
+            try:
+                stake = b.find("div", class_="labels").find(
+                    "span", class_="label label-default").text.strip()
+            except:
+                stake = "0"
+
             # try:
             #     content = b.find(
             #         "div", class_="feed-pick-title").find("p").text.strip()
@@ -109,19 +117,19 @@ for link in links_to_scrap:
                             start_time[0]) < 22 else int(start_time[0])-22, int(start_time[1]), 0)
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                              "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[:2]), "start_time": bet_start_time.strftime("%H:%M")})
+                                              "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[:2]), "start_time": bet_start_time.strftime("%H:%M"), "stake": stake})
                             print("Added Today Bet", start)
                         else:
                             continue
                     elif str(tomorrow) in start:
                         bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                          "odd": odd, "start": start})
+                                          "odd": odd, "start": start, "stake": stake})
                         print("Added Tomorrow Bet", start)
                     else:
                         continue
             else:
                 bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                  "odd": odd, "start": start})
+                                  "odd": odd, "start": start, "stake": stake})
                 print("Added Combo Bet", start)
 
 print("Start sorting links")
@@ -183,7 +191,7 @@ html = """\
 """
 
 for bet in bets_list:
-    message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('start')}</td></tr>"
+    message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('stake')}</td><td>{bet.get('start')}</td></tr>"
 
 html = html.format(message_to_send)
 
