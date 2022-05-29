@@ -102,7 +102,6 @@ for link in links_to_scrap:
                             ' ', "").split(':')
                         bet_start_time = timedelta(hours=int(start_time[0])+2, minutes=int(
                             start_time[1]), seconds=0)
-                        print(bet_start_time)
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                               "odd": odd, "start": start})
@@ -111,7 +110,6 @@ for link in links_to_scrap:
                     elif str(tomorrow) in start:
                         bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                           "odd": odd, "start": start})
-                        print("tomorrow added", bets_list)
             else:
                 bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                   "odd": odd, "start": start})

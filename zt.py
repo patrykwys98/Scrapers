@@ -48,7 +48,7 @@ def scrap_zawod_typer():
         s = HTMLSession()
         r = s.get(page)
 
-        r.html.render(sleep=30)
+        r.html.render(sleep=30, timeout=120)
         soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
         bets = soup.find_all(
@@ -155,7 +155,7 @@ if len(bets_list) > 0:
     """
     bets_message = ""
     for bet in bets_list:
-        bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+        bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr>"
 
     html = html.format(bets_message)
 
