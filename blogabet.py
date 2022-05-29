@@ -28,6 +28,7 @@ s = HTMLSession()
 r = s.get("https://blogabet.com/tips/")
 
 sleep_time = random.randint(10, 20)
+sleep_time = 15
 
 r.html.render(timeout=70, sleep=sleep_time)
 soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -45,6 +46,7 @@ for link in all_links:
 
 for link in links_to_scrap:
     sleep_time = random.randint(5, 30)
+    sleep_time = 10
     r = s.get(link)
     r.html.render(timeout=70, sleep=sleep_time)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -92,7 +94,7 @@ for link in links_to_scrap:
             # except:
             #     content = ""
             if not "combo-pick" in link:
-                if not "ago" in start:
+                if not "ago" in start and not "live" in start:
                     if str(today) in start:
                         start_time = start.split(',')
                         start_time = start_time[1]
@@ -100,9 +102,12 @@ for link in links_to_scrap:
                             ' ', "").split(':')
                         bet_start_time = timedelta(hours=int(start_time[0])+2, minutes=int(
                             start_time[1]), seconds=0)
+                        print("Bet start time", bet_start_time)
+                        print("Start time", start_time)
+                        print("Start", start)
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                              "odd": odd, "start": start})
+                                              "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[0:2]), "start_time": str(bet_start_time)})
                         else:
                             continue
                     elif str(tomorrow) in start:
@@ -115,6 +120,29 @@ for link in links_to_scrap:
 
 bets_list = sorted(bets_list, key=sortByYield, reverse=True)
 bets_list = [i for n, i in enumerate(bets_list) if i not in bets_list[n+1:]]
+now = datetime.now().time().strftime("%H:%M")
+now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
+
+bets_to_send = []
+for bet in bets_list:
+    if 'start_time' in bet:
+        start_time = str(bet['start_time'])
+        if timedelta(hours=int(start_time[:2]), minutes=int(start_time[3:5]), seconds=0) > now:
+            bets_to_send.append(bet)
+            print("Today added", bet['start'])
+        else:
+            continue
+    else:
+        if str(tomorrow) in bet['start']:
+            bets_to_send.append(bet)
+            print("Tomorrow added", bet['start'])
+        else:
+            continue
+
+bets_list = bets_to_send
+
+# bets_list = [i for i in bets_list if i["start_time"]
+#              > now or str(tomorrow) in i["start"]]
 
 
 load_dotenv(find_dotenv())
