@@ -26,7 +26,7 @@ now = datetime.now().time().strftime("%H:%M")
 now = time(int(now[:2]), int(now[3:]), 0)
 
 soup = scrap_with_render("https://blogabet.com/tips/",
-                         sleep=10, timeout=70,
+                         sleep=10, timeout=70, wait=20,
                          ip=random.choice(proxies))
 
 all_links = soup.find_all("a", href=True)
@@ -48,13 +48,13 @@ i = 0
 for link in links_to_scrap:
     print("Checking link: " + link)
     i += 1
-    if i > 15:
+    if i > 5:
         proxies = get_proxies_with_proxy(random.choice(proxies))
         print("Getting new proxies")
         i = 0
     print("Changing proxy ")
     soup = scrap_with_render(link, timeout=random.randint(
-        7, 15), sleep=random.randint(1, 10), ip=random.choice(proxies))
+        7, 15), sleep=random.randint(7, 15), wait=random(7, 15), ip=random.choice(proxies))
     print("Rendering")
 
     try:

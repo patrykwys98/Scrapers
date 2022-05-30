@@ -16,11 +16,12 @@ today, tomorrow, now = get_dates()
 def sortByEffective(bet):
     return bet['effective']
 
+
 baseurl = "https://zawodtyper.pl/"
 
 pages = []
 soup = scrap_with_render(url=baseurl, sleep=20,
-                            timeout=20, ip=random.choice(proxies))
+                         timeout=20, ip=random.choice(proxies))
 
 links = soup.find(
     'section', class_='typy-dnia-glowna only-desktop pt-12 pb-16 bg-prime').find_all('a')
@@ -104,4 +105,3 @@ if len(bets_list) > 0:
     for bet in bets_list:
         bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
     send_mail(subject, bets_message)
-
