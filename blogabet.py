@@ -54,7 +54,7 @@ for link in links_to_scrap:
         i = 0
     print("Changing proxy ")
     soup = scrap_with_render(link, timeout=random.randint(
-        7, 15), sleep=random.randint(7, 15), wait=random(7, 15), ip=random.choice(proxies))
+        7, 15), sleep=random.randint(7, 15), wait=random.randint(7, 15), ip=random.choice(proxies))
     print("Rendering")
 
     try:
