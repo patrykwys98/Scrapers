@@ -63,5 +63,3 @@ def get_proxies_with_proxy(proxy):
 
     return proxies
 
-
-print(get_proxies())

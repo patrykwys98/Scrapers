@@ -117,5 +117,3 @@ def scrap_forum_bukmacherskie():
     for bet in test:
         message_to_send += f"<tr><td>{bet.get('author')}</td><td>{bet.get('points')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('start_time')}</td><td>{bet.get('match')}</td><td>{bet.get('prediction')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
     send_mail(subject, message_to_send)
-
-scrap_forum_bukmacherskie()

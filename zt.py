@@ -107,5 +107,3 @@ def scrap_zawod_typer():
             bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
         send_mail(subject, bets_message)
 
-
-scrap_zawod_typer()
