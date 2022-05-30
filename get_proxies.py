@@ -58,8 +58,5 @@ def get_proxies_with_proxy(proxy):
                         {"http": "http", "ip": ip_and_port, "last_checked": last_checked})
                 else:
                     continue
-            else:
-                continue
 
     return proxies
-
