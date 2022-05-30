@@ -55,7 +55,7 @@ def scrap_blogabet():
             print("Getting new proxies")
             i = 0
         print("Changing proxy ")
-        soup = scrap_with_render(link, sleep=random.randint(7, 10),
+        soup = scrap_with_render(link, sleep=random.randint(7, 13), wait=3,
                                  ip=random.choice(proxies))
         print("Rendering")
 

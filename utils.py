@@ -8,11 +8,11 @@ from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
 
 
-def scrap_with_render(url, timeout=20, sleep=0, ip=None):
+def scrap_with_render(url, timeout=70, sleep=0, wait=2, ip=None):
     try:
         s = HTMLSession()
         r = s.get(url, proxies={f"http": f"{ip}"})
-        r.html.render(timeout=timeout, sleep=sleep)
+        r.html.render(timeout=timeout, sleep=sleep, wait=wait)
         soup = BeautifulSoup(r.html.raw_html, "html.parser")
         return soup
     except:
