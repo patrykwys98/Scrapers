@@ -9,7 +9,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
-from get_proxies import get_proxies
+from get_proxies import get_proxies, get_proxies_with_proxy
 
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
                      "boxing", "golf", "chess", "cricket", "trotting", "other",
@@ -57,12 +57,12 @@ for link in all_links:
 i = 0
 
 for link in links_to_scrap:
-    i += 1
-    if i > 35:
-        proxies = get_proxies()
-        print("Getting new proxies")
     print("Checking link: " + link)
     proxy = random.choice(proxies)
+    i += 1
+    if i > 15:
+        proxies = get_proxies_with_proxy(proxy)
+        print("Getting new proxies")
     print("Changing proxy: {}".format(proxy))
     sleep_time = random.randint(7, 15)
     r = s.get(link, proxies={
