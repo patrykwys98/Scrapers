@@ -9,12 +9,13 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
+from get_proxies import get_proxies
 
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
-                     "boxing", "futsal", "golf", "chess", "cricket", "trotting", "other",
-                     "volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
-                     "darts", "combo-pick", "e-sports",
-                     # "basketball",
+                     "boxing", "golf", "chess", "cricket", "trotting", "other",
+                     #  "volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
+                     #  "darts", "combo-pick", "e-sports",
+                     #  "basketball",
                      ]
 
 
@@ -22,15 +23,19 @@ def sortByYield(row):
     return row['user_yield']
 
 
+proxies = get_proxies()
+proxy_to_init = random.choice(proxies)
+
 today = date.today().day
 tomorrow = today + 1
 now = datetime.now().time().strftime("%H:%M")
 now = time(int(now[:2]), int(now[3:]), 0)
 
 s = HTMLSession()
-r = s.get("https://blogabet.com/tips/")
+r = s.get("https://blogabet.com/tips/",
+          proxies={f'{proxy_to_init.get("http")}': f"{proxy_to_init.get('ip')}"})
 
-sleep_time = random.randint(10, 15)
+sleep_time = random.randint(3, 5)
 print("Init after", sleep_time)
 r.html.render(timeout=70, sleep=sleep_time)
 soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -49,13 +54,21 @@ for link in all_links:
         print("Skipping link:", link['href'])
         continue
 
+i = 0
 
 for link in links_to_scrap:
+    i += 1
+    if i > 35:
+        proxies = get_proxies()
+        print("Getting new proxies")
     print("Checking link: " + link)
-    sleep_time = random.randint(9, 20)
-    r = s.get(link)
+    proxy = random.choice(proxies)
+    print("Changing proxy: {}".format(proxy))
+    sleep_time = random.randint(2, 4)
+    r = s.get(link, proxies={
+        f'{proxy.get("http")}': f"{proxy.get('ip')}"})
     print("Rendering after", sleep_time)
-    r.html.render(timeout=70, sleep=sleep_time)
+    r.html.render(timeout=210, sleep=sleep_time)
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
     bet = soup.find_all("li", class_="block media _feedPick feed-pick")

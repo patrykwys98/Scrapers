@@ -47,8 +47,11 @@ def scrap_zawod_typer():
         found_pages_to_scrap += 1
         s = HTMLSession()
         r = s.get(page)
-
-        r.html.render(sleep=30, timeout=120)
+        try:
+            r.html.render(sleep=30, timeout=210)
+        except:
+            print("Error while rendering")
+            continue
         soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
         bets = soup.find_all(
