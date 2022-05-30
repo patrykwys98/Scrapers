@@ -1,24 +1,16 @@
-import requests
-from bs4 import BeautifulSoup
-from datetime import date, datetime, timedelta
-from requests_html import HTMLSession
 import re
-import os
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from dotenv import load_dotenv, find_dotenv
 from get_proxies import get_proxies
 import random
+from datetime import timedelta, datetime
 
-today = date.today().day
-tomorrow = today + 1
+from utils import scrap_with_render, get_dates, send_mail
 
-now = datetime.now().time().strftime("%H:%M")
-now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
+
 bets_list = []
 
 proxies = get_proxies()
+
+today, tomorrow, now = get_dates()
 
 
 def sortByEffective(bet):
@@ -29,14 +21,11 @@ def scrap_zawod_typer():
     baseurl = "https://zawodtyper.pl/"
 
     pages = []
-
-    r = requests.get(baseurl)
-    soup = BeautifulSoup(r.content, 'lxml')
+    soup = scrap_with_render(url=baseurl, sleep=20,
+                             timeout=20, ip=random.choice(proxies))
 
     links = soup.find(
         'section', class_='typy-dnia-glowna only-desktop pt-12 pb-16 bg-prime').find_all('a')
-
-    found_pages_to_scrap = 0
 
     for link in links:
 
@@ -48,24 +37,12 @@ def scrap_zawod_typer():
     pages = list(dict.fromkeys(pages))
 
     for page in pages:
-        proxy = random.choice(proxies)
-        s = HTMLSession()
-        r = s.get(page, proxies={
-            f'{proxy.get("http")}': f"{proxy.get('ip')}"})
-        try:
-            r.html.render(sleep=30, timeout=210)
-        except:
-            print("Error while rendering")
-            continue
-        soup = BeautifulSoup(r.html.raw_html, "html.parser")
-
+        soup = scrap_with_render(
+            url=page, sleep=2, timeout=70, ip=random.choice(proxies))
         bets = soup.find_all(
             'div', id=re.compile("^typ-"), class_="relative")
-
         for bet in bets:
-
             fields = bet.find_all("fieldset")
-
             try:
                 effective = bet.find(
                     'div', class_="absolute top-0 right-[30px] bg-body-lighter shadow shadow-prime-darker rounded-b-md p-1 lg:right-[58px] overflow-hidden after:only-mobile after:absolute after:bg-white after:w-[10%] after:h-full after:top-0 after:right-[150px] after:animate-[like-shine_24s_ease-in-out_infinite] after:blur after:skew-x-12 after:transition-transform").find('p', class_="text-[12px] px-1 text-center font-bold lg:text-[14px]").text
@@ -104,7 +81,6 @@ def scrap_zawod_typer():
                     'a', class_="block w-[calc(100%_-_75px)] max-w-fit text-ellipsis whitespace-nowrap overflow-hidden !no-underline leading-[1.2] !text-text hover:!text-text-darker").span.text
             except:
                 author = ""
-
             formatted_bet = {
                 'effective': effective,
                 'dyscipline':  dyscipline,
@@ -122,56 +98,15 @@ def scrap_zawod_typer():
                     start_time[1]), seconds=0)
                 if (bet_start_time - now).total_seconds() > 0:
                     bets_list.append(formatted_bet)
+    bets_list.sort(key=sortByEffective, reverse=True)
 
+    if len(bets_list) > 0:
+        subject = f'Bets - Zawód typer - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
+        bets_message = ""
+        for bet in bets_list:
+            bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
+        print(bets_message)
+        send_mail(subject, bets_message)
 
-tries = 0
 
 scrap_zawod_typer()
-
-if len(bets_list) == 0:
-    while tries < 5:
-        if len(bets_list) > 0:
-            break
-        tries += 1
-        scrap_zawod_typer()
-
-bets_list.sort(key=sortByEffective, reverse=True)
-
-load_dotenv(find_dotenv())
-
-if len(bets_list) > 0:
-    smtp_server = "smtp.gmail.com"
-    sender_address = os.getenv("SENDER_ADDRESS")
-    sender_pass = os.getenv("SENDER_PASS")
-    receiver_address = os.getenv("RECEIVER_ADDRESS")
-
-    message = MIMEMultipart('alternative')
-    message['From'] = sender_address
-    message['To'] = receiver_address
-    message['Subject'] = f'Bets - Zawód Typer - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
-
-    html = """\
-    <html>
-    <body>
-        <table>
-        <tbody>
-            {}
-        </tbody>
-        </table>
-    </body>
-    </html>
-    """
-    bets_message = ""
-    for bet in bets_list:
-        bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
-
-    html = html.format(bets_message)
-
-    message.attach(MIMEText(html, 'html'))
-
-    session = smtplib.SMTP('smtp.gmail.com', 587)
-    session.starttls()
-    session.login(sender_address, sender_pass)
-    text = message.as_string()
-    session.sendmail(sender_address, receiver_address, text)
-    session.quit()
