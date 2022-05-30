@@ -22,8 +22,11 @@ def get_proxies():
             last_checked = columns[7].text.strip()
             # print(https)
             if https == "no" and not "hours" in last_checked and not "hour" in last_checked:
-                proxies.append(
-                    {"http": "http", "ip": ip_and_port, "last_checked": last_checked})
+                if int(last_checked[0:2]) < 10 or "secs" in last_checked:
+                    proxies.append(
+                        {"http": "http", "ip": ip_and_port, "last_checked": last_checked})
+                else:
+                    continue
             else:
                 continue
 
@@ -50,9 +53,15 @@ def get_proxies_with_proxy(proxy):
             last_checked = columns[7].text.strip()
             # print(https)
             if https == "no" and not "hours" in last_checked and not "hour" in last_checked:
-                proxies.append(
-                    {"http": "http", "ip": ip_and_port, "last_checked": last_checked})
+                if int(last_checked[0:2]) < 10 or "secs" in last_checked:
+                    proxies.append(
+                        {"http": "http", "ip": ip_and_port, "last_checked": last_checked})
+                else:
+                    continue
             else:
                 continue
 
     return proxies
+
+
+print(get_proxies())

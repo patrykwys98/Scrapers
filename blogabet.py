@@ -50,7 +50,7 @@ def scrap_blogabet():
     for link in links_to_scrap:
         print("Checking link: " + link)
         i += 1
-        if i > 10:
+        if i > 15:
             proxies = get_proxies_with_proxy(random.choice(proxies))
             print("Getting new proxies")
             i = 0
