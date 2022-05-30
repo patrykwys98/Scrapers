@@ -55,11 +55,15 @@ def scrap_blogabet():
             print("Getting new proxies")
             i = 0
         print("Changing proxy ")
-        soup = scrap_with_render(link, sleep=random.randint(4, 12),
+        soup = scrap_with_render(link, sleep=random.randint(7, 10),
                                  ip=random.choice(proxies))
         print("Rendering")
 
-        bet = soup.find_all("li", class_="block media _feedPick feed-pick")
+        try:
+            bet = soup.find_all("li", class_="block media _feedPick feed-pick")
+        except:
+            print("No bets found")
+            continue
 
         for b in bet:
             event = b.find("div", class_="media-body").find("h3").text.strip()
