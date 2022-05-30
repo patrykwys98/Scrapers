@@ -35,7 +35,7 @@ s = HTMLSession()
 r = s.get("https://blogabet.com/tips/",
           proxies={f'{proxy_to_init.get("http")}': f"{proxy_to_init.get('ip')}"})
 
-sleep_time = random.randint(3, 5)
+sleep_time = random.randint(10, 20)
 print("Init after", sleep_time)
 r.html.render(timeout=70, sleep=sleep_time)
 soup = BeautifulSoup(r.html.raw_html, "html.parser")
@@ -64,7 +64,7 @@ for link in links_to_scrap:
     print("Checking link: " + link)
     proxy = random.choice(proxies)
     print("Changing proxy: {}".format(proxy))
-    sleep_time = random.randint(3, 5)
+    sleep_time = random.randint(7, 15)
     r = s.get(link, proxies={
         f'{proxy.get("http")}': f"{proxy.get('ip')}"})
     print("Rendering after", sleep_time)
