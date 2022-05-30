@@ -64,7 +64,7 @@ for link in links_to_scrap:
     print("Checking link: " + link)
     proxy = random.choice(proxies)
     print("Changing proxy: {}".format(proxy))
-    sleep_time = random.randint(2, 4)
+    sleep_time = random.randint(3, 5)
     r = s.get(link, proxies={
         f'{proxy.get("http")}': f"{proxy.get('ip')}"})
     print("Rendering after", sleep_time)

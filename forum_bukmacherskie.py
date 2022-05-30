@@ -9,10 +9,15 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
+from get_proxies import get_proxies
+import random
 
 
 def sortByPoints(row):
     return row['points']
+
+
+proxies = get_proxies()
 
 
 def clean_text(text, words_to_remove, word_to_replace="", lower=True):
@@ -29,6 +34,7 @@ now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 
 read_file = pd.read_excel('typerzy.xlsx')
 read_file.drop('LP', inplace=True, axis=1)
+
 df = read_file.to_dict('records')
 
 
@@ -64,10 +70,12 @@ pages_to_scrap = list(dict.fromkeys(pages_to_scrap))
 
 baseurl = "https://forum.bukmacherskie.com"
 for page in pages_to_scrap:
+    proxy = random.choice(proxies)
     s = HTMLSession()
-    r = s.get(baseurl + page)
+    r = s.get(baseurl + page, proxies={
+        f'{proxy.get("http")}': f"{proxy.get('ip')}"})
 
-    r.html.render(timeout=70)
+    r.html.render(timeout=70, )
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
     bets = soup.find_all('div', class_="message-inner")

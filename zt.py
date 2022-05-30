@@ -8,6 +8,8 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
+from get_proxies import get_proxies
+import random
 
 today = date.today().day
 tomorrow = today + 1
@@ -15,6 +17,8 @@ tomorrow = today + 1
 now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 bets_list = []
+
+proxies = get_proxies()
 
 
 def sortByEffective(bet):
@@ -44,9 +48,10 @@ def scrap_zawod_typer():
     pages = list(dict.fromkeys(pages))
 
     for page in pages:
-        found_pages_to_scrap += 1
+        proxy = random.choice(proxies)
         s = HTMLSession()
-        r = s.get(page)
+        r = s.get(page, proxies={
+            f'{proxy.get("http")}': f"{proxy.get('ip')}"})
         try:
             r.html.render(sleep=30, timeout=210)
         except:
