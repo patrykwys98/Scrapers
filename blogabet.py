@@ -68,7 +68,11 @@ for link in links_to_scrap:
     r = s.get(link, proxies={
         f'{proxy.get("http")}': f"{proxy.get('ip')}"})
     print("Rendering after", sleep_time)
-    r.html.render(timeout=210, sleep=sleep_time)
+    try:
+        r.html.render(timeout=210, sleep=sleep_time)
+    except:
+        print("Error while rendering, going to next page")
+        continue
     soup = BeautifulSoup(r.html.raw_html, "html.parser")
 
     bet = soup.find_all("li", class_="block media _feedPick feed-pick")
