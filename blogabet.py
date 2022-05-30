@@ -63,6 +63,7 @@ for link in links_to_scrap:
     if i > 15:
         proxies = get_proxies_with_proxy(proxy)
         print("Getting new proxies")
+        i = 0
     print("Changing proxy: {}".format(proxy))
     sleep_time = random.randint(7, 15)
     r = s.get(link, proxies={
