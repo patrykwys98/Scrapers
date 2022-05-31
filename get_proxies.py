@@ -1,12 +1,10 @@
 from requests_html import HTMLSession
 from bs4 import BeautifulSoup
-import random
 
 
-def get_proxies():
+def get_proxies(session):
     try:
         url = "https://free-proxy-list.net/"
-        session = HTMLSession()
         r = session.get(url)
         r.html.render(timeout=70, wait=3, sleep=2)
         soup = BeautifulSoup(r.html.raw_html, "html.parser")

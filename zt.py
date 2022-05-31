@@ -2,13 +2,14 @@ import re
 from get_proxies import get_proxies
 import random
 from datetime import timedelta, datetime
-
+from requests_html import HTMLSession
 from utils import scrap_with_render, get_dates, send_mail
 
+s = HTMLSession()
 
 bets_list = []
 
-proxies = get_proxies()
+proxies = get_proxies(s)
 
 today, tomorrow, now = get_dates()
 
@@ -20,7 +21,7 @@ def sortByEffective(bet):
 baseurl = "https://zawodtyper.pl/"
 
 pages = []
-soup = scrap_with_render(url=baseurl, sleep=20,
+soup = scrap_with_render(url=baseurl, session=s, sleep=20,
                          timeout=20, ip=random.choice(proxies))
 
 links = soup.find(

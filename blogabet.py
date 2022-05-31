@@ -2,8 +2,9 @@
 import random
 from datetime import time
 from datetime import date, datetime
-from get_proxies import get_proxies, get_proxies_with_proxy
+from get_proxies import get_proxies
 from utils import scrap_with_render, send_mail, remove_duplicates
+from requests_html import HTMLSession
 
 
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
@@ -18,14 +19,16 @@ def sortByYield(row):
     return row['user_yield']
 
 
-proxies = get_proxies()
+s = HTMLSession()
+
+proxies = get_proxies(s)
 
 today = date.today().day
 tomorrow = today + 1
 now = datetime.now().time().strftime("%H:%M")
 now = time(int(now[:2]), int(now[3:]), 0)
 
-soup = scrap_with_render("https://blogabet.com/tips/",
+soup = scrap_with_render("https://blogabet.com/tips/", session=s,
                          sleep=10, timeout=70,
                          ip=random.choice(proxies))
 
@@ -52,13 +55,13 @@ i = 0
 for link in links_to_scrap:
     print("Checking link: " + link)
     i += 1
-    if i > 10:
-        proxies = get_proxies()
+    if i > 15:
+        proxies = get_proxies(s)
         print("Getting new proxies")
         i = 0
     print("Changing proxy ")
     try:
-        soup = scrap_with_render(link, sleep=random.randint(
+        soup = scrap_with_render(link, session=s, sleep=random.randint(
             7, 15), ip=random.choice(proxies))
         print("Rendering")
     except:

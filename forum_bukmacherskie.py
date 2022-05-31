@@ -5,13 +5,16 @@ from datetime import date, datetime, timedelta
 from get_proxies import get_proxies
 import random
 from utils import send_mail, clean_text, scrap_with_render
+from requests_html import HTMLSession
+
+s = HTMLSession()
 
 
 def sortByPoints(row):
     return row['points']
 
 
-proxies = get_proxies()
+proxies = get_proxies(s)
 now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 
@@ -37,7 +40,7 @@ tomorrow = today + 1
 test = []
 
 baseurl = "https://forum.bukmacherskie.com/forums/typy-dnia.43"
-soup = scrap_with_render(baseurl, timeout=20, sleep=5,
+soup = scrap_with_render(baseurl, session=s, timeout=20, sleep=5,
                          ip=random.choice(proxies))
 
 all_links = soup.find_all('a', href=True)
@@ -54,7 +57,7 @@ pages_to_scrap = list(dict.fromkeys(pages_to_scrap))
 
 baseurl = "https://forum.bukmacherskie.com"
 for page in pages_to_scrap:
-    soup = scrap_with_render(baseurl + page, timeout=20,
+    soup = scrap_with_render(baseurl + page, session=s, timeout=20,
                              sleep=5, ip=random.choice(proxies))
 
     bets = soup.find_all('div', class_="message-inner")
