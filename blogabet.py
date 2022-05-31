@@ -94,11 +94,6 @@ for link in links_to_scrap:
                 else:
                     if int(tips_effective.replace("+", "")) < 10 or int(tips_count) < 50:
                         continue
-                    else:
-                        user_link = user_container.find("a").get("href")
-                        if not user_link in links_to_scrap:
-                            print("append", user_link)
-                            links_to_scrap.append(user_link)
 
                 odd = b.find("span", class_="feed-odd").text.strip()
             except:
