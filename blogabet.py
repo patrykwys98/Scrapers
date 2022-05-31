@@ -53,13 +53,16 @@ for link in links_to_scrap:
     print("Checking link: " + link)
     i += 1
     if i > 10:
-        proxies = get_proxies_with_proxy(random.choice(proxies))
+        proxies = get_proxies()
         print("Getting new proxies")
         i = 0
     print("Changing proxy ")
-    soup = scrap_with_render(link, sleep=random.randint(
-        7, 15), ip=random.choice(proxies))
-    print("Rendering")
+    try:
+        soup = scrap_with_render(link, sleep=random.randint(
+            7, 15), ip=random.choice(proxies))
+        print("Rendering")
+    except:
+        continue
 
     try:
         bet = soup.find_all("li", class_="block media _feedPick feed-pick")
