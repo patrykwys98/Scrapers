@@ -1,16 +1,16 @@
-
 import random
 from datetime import time
 from datetime import date, datetime
-from get_proxies import get_proxies
+from get_proxies import get_proxies, get_proxies_with_proxy
 from utils import scrap_with_render, send_mail, remove_duplicates
 from requests_html import HTMLSession
+import pandas as pd
 
 
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
-                     "boxing", "golf", "chess", "cricket", "trotting", "other", "table-tennis", 'table-tennis'
-                     #  "volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
-                     #  "darts", "combo-pick", "e-sports",
+                     "boxing", "golf", "chess", "cricket", "trotting", "other", 'table-tennis'
+                     #"volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
+                     # "darts", "combo-pick", "e-sports",
                      #  "basketball",
                      ]
 
@@ -33,6 +33,7 @@ soup = scrap_with_render("https://blogabet.com/tips/", session=s,
                          ip=random.choice(proxies))
 
 all_links = soup.find_all("a", href=True)
+live_urls = []
 
 links_to_scrap = []
 bets_list = []
@@ -43,7 +44,9 @@ for link in all_links:
     except:
         title = ""
     href = link.get("href")
-    if "blogabet.com/tips/" in href and not any(sport in link["href"] for sport in sports_to_exclude) and title != "Livebet":
+    if title == "Livebet":
+        live_urls.append(href)
+    if "blogabet.com/tips/" in href and not any(sport in link["href"] for sport in sports_to_exclude):
         print("Added link to check:", link['href'])
         links_to_scrap.append(href)
     else:
@@ -56,13 +59,15 @@ for link in links_to_scrap:
     print("Checking link: " + link)
     i += 1
     if i > 15:
-        proxies = get_proxies(s)
+        proxy = random.choice(proxies)
+        proxies = get_proxies_with_proxy(s, proxy)
         print("Getting new proxies")
         i = 0
+        del proxy
     print("Changing proxy ")
     try:
-        soup = scrap_with_render(link, session=s, sleep=random.randint(
-            7, 15), ip=random.choice(proxies))
+        soup = scrap_with_render(
+            link, session=s, sleep=random.randint(1, 5), wait=2, ip=random.choice(proxies))
         print("Rendering")
     except:
         continue
@@ -87,8 +92,13 @@ for link in links_to_scrap:
                 if tips_effective[0] == "-" or tips_effective[0] == "0" or tips_effective[0] == "+0" or username == "":
                     continue
                 else:
-                    if int(tips_effective.replace("+", "")) < 10 or int(tips_count) < 80:
+                    if int(tips_effective.replace("+", "")) < 10 or int(tips_count) < 50:
                         continue
+                    else:
+                        user_link = user_container.find("a").get("href")
+                        if not user_link in links_to_scrap:
+                            print("append", user_link)
+                            links_to_scrap.append(user_link)
 
                 odd = b.find("span", class_="feed-odd").text.strip()
             except:
@@ -146,7 +156,6 @@ bets_list = remove_duplicates(bets_list)
 now = datetime.now().time().strftime("%H:%M")
 now = time(int(now[:2]), int(now[3:]), 0)
 print("Actual time", str(now))
-
 bets_to_send = []
 for bet in bets_list:
     if 'start_time' in bet:
@@ -163,11 +172,13 @@ for bet in bets_list:
         else:
             continue
 
-bets_list = bets_to_send
+df = pd.DataFrame(live_urls)
+df.to_csv("live_urls.csv", index=False)
 
-subject = f'Bets - Blogabet- {datetime.now().strftime("%d-%m-%Y %H:%M")}'
-message_to_send = ""
-for bet in bets_list:
-    message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('stake')}</td><td>{bet.get('start')}</td></tr>"
+if len(bets_to_send) > 0:
+    subject = f'Bets - Blogabet- {datetime.now().strftime("%d-%m-%Y %H:%M")}'
+    message_to_send = ""
+    for bet in bets_to_send:
+        message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('stake')}</td><td>{bet.get('start')}</td></tr>"
 
 send_mail(subject, message_to_send)

@@ -1,6 +1,5 @@
 import os
 import smtplib
-from requests_html import HTMLSession
 from bs4 import BeautifulSoup
 from datetime import date, datetime, timedelta
 from email.mime.multipart import MIMEMultipart

@@ -34,7 +34,7 @@ def get_proxies(session):
         return []
 
 
-def get_proxies_with_proxy(proxy):
+def get_proxies_with_proxy(s, proxy):
     url = "https://free-proxy-list.net/"
     session = HTMLSession()
     r = session.get(url, proxies={

@@ -24,7 +24,6 @@ read_file.drop('LP', inplace=True, axis=1)
 
 df = read_file.to_dict('records')
 
-
 def get_user_points(username):
     for i in range(len(df)):
         if df[i].get('U2ytkownik') == str(username):
