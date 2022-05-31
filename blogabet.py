@@ -8,7 +8,7 @@ from requests_html import HTMLSession
 
 
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
-                     "boxing", "golf", "chess", "cricket", "trotting", "other", "table-tennis",
+                     "boxing", "golf", "chess", "cricket", "trotting", "other", "table-tennis", 'table-tennis'
                      #  "volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
                      #  "darts", "combo-pick", "e-sports",
                      #  "basketball",
