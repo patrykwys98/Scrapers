@@ -35,8 +35,9 @@ links_to_scrap = []
 bets_list = []
 
 for link in all_links:
+    title = link.get("title").replace(" ", "")
     href = link.get("href")
-    if "blogabet.com/tips/" in href and not any(sport in link["href"] for sport in sports_to_exclude):
+    if "blogabet.com/tips/" in href and not any(sport in link["href"] for sport in sports_to_exclude) and title != "Livebet":
         print("Added link to check:", link['href'])
         links_to_scrap.append(href)
     else:
@@ -48,7 +49,7 @@ i = 0
 for link in links_to_scrap:
     print("Checking link: " + link)
     i += 1
-    if i > 5:
+    if i > 10:
         proxies = get_proxies_with_proxy(random.choice(proxies))
         print("Getting new proxies")
         i = 0
