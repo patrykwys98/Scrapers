@@ -38,7 +38,7 @@ pages = list(dict.fromkeys(pages))
 
 for page in pages:
     soup = scrap_with_render(
-        url=page, sleep=2, timeout=70, ip=random.choice(proxies))
+        url=page, session=s, sleep=2, timeout=70, ip=random.choice(proxies))
     bets = soup.find_all(
         'div', id=re.compile("^typ-"), class_="relative")
     for bet in bets:
