@@ -35,7 +35,10 @@ links_to_scrap = []
 bets_list = []
 
 for link in all_links:
-    title = link.get("title").replace(" ", "")
+    try:
+        title = link.get("title").replace(" ", "")
+    except:
+        title = ""
     href = link.get("href")
     if "blogabet.com/tips/" in href and not any(sport in link["href"] for sport in sports_to_exclude) and title != "Livebet":
         print("Added link to check:", link['href'])
