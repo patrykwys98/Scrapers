@@ -18,11 +18,18 @@ proxies = get_proxies(s)
 now = datetime.now().time().strftime("%H:%M")
 now = timedelta(hours=int(now[:2]), minutes=int(now[3:]), seconds=0)
 
+today = date.today().day
+month = date.today().month
+tomorrow = today + 1
+if len(str(month)) == 1:
+    month = '0' + str(month)
+
 
 read_file = pd.read_excel('typerzy.xlsx')
 read_file.drop('LP', inplace=True, axis=1)
 
 df = read_file.to_dict('records')
+
 
 def get_user_points(username):
     for i in range(len(df)):
@@ -33,13 +40,11 @@ def get_user_points(username):
 
 read_file.to_csv('typerzy.csv', index=None, header=True)
 
-today = date.today().day
-tomorrow = today + 1
 
 test = []
 
 baseurl = "https://forum.bukmacherskie.com/forums/typy-dnia.43"
-soup = scrap_with_render(baseurl, session=s, timeout=20, sleep=5,
+soup = scrap_with_render(baseurl, session=s, timeout=20, sleep=20,
                          ip=random.choice(proxies))
 
 all_links = soup.find_all('a', href=True)
@@ -47,19 +52,21 @@ pages_to_scrap = []
 
 for link in all_links:
     href = link.get('href')
-    if f"{today}-" in href or f"{tomorrow}-" in href:
+    if f"{today}-{month}" in href or f"{tomorrow}-{month}" in href:
         if not 'https' in href or not 'http' in href:
             pages_to_scrap.append(href.replace("latest", ""))
-
+print(pages_to_scrap)
 pages_to_scrap = list(dict.fromkeys(pages_to_scrap))
 
 
 baseurl = "https://forum.bukmacherskie.com"
 for page in pages_to_scrap:
-    soup = scrap_with_render(baseurl + page, session=s, timeout=20,
-                             sleep=5, ip=random.choice(proxies))
-
-    bets = soup.find_all('div', class_="message-inner")
+    soup = scrap_with_render(baseurl + page, session=s, timeout=60,
+                             sleep=20, ip=random.choice(proxies))
+    try:
+        bets = soup.find_all('div', class_="message-inner")
+    except:
+        continue
 
     for bet in bets:
 
