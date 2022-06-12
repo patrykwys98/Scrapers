@@ -54,7 +54,7 @@ def send_mail(subject, message_to_send):
 
         message.attach(MIMEText(html, 'html'))
 
-        session = smtplib.SMTP('smtp.gmail.com', 587)
+        session = smtplib.SMTP('smtp.sendgrid.net', 465)
         session.starttls()
         session.login(sender_address, sender_pass)
         text = message.as_string()

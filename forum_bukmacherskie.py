@@ -62,9 +62,10 @@ pages_to_scrap = list(dict.fromkeys(pages_to_scrap))
 baseurl = "https://forum.bukmacherskie.com"
 for page in pages_to_scrap:
     soup = scrap_with_render(baseurl + page, session=s, timeout=60,
-                             sleep=20, ip=random.choice(proxies))
+                             sleep=30, wait=30, ip=random.choice(proxies))
     try:
         bets = soup.find_all('div', class_="message-inner")
+        print(bets)
     except:
         continue
 
@@ -86,6 +87,7 @@ for page in pages_to_scrap:
         odds = splited_text[4]
         bukmacher = splited_text[5]
         content = " ".join(splited_text[6:])
+        print(text, start_time, dyscipline, match, prediction, odds, bukmacher, content)
 
         if start_time == "":
             start_time = "00:00"
@@ -103,6 +105,7 @@ for page in pages_to_scrap:
             "bukmacher": bukmacher,
             "content": content,
         }
+        print(bet_to_append)
 
         start_time = bet_to_append['start_time'].split(':')
         if not "Tutaj podajemy typy" in text:
@@ -121,8 +124,5 @@ for page in pages_to_scrap:
 
 test.sort(key=sortByPoints, reverse=True)
 
-subject = f'Bets - Forum bukmacherskie - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
-message_to_send = ""
-for bet in test:
-    message_to_send += f"<tr><td>{bet.get('author')}</td><td>{bet.get('points')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('start_time')}</td><td>{bet.get('match')}</td><td>{bet.get('prediction')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
-send_mail(subject, message_to_send)
+df = pd.DataFrame(test)
+df.to_csv('csv/fb.csv', index=None)

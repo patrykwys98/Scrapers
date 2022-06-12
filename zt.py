@@ -4,6 +4,7 @@ import random
 from datetime import timedelta, datetime
 from requests_html import HTMLSession
 from utils import scrap_with_render, get_dates, send_mail
+import pandas as pd
 
 s = HTMLSession()
 
@@ -38,7 +39,7 @@ pages = list(dict.fromkeys(pages))
 
 for page in pages:
     soup = scrap_with_render(
-        url=page, session=s, sleep=2, timeout=70, ip=random.choice(proxies))
+        url=page, session=s, sleep=15, timeout=70, wait=15, ip=random.choice(proxies))
     bets = soup.find_all(
         'div', id=re.compile("^typ-"), class_="relative")
     for bet in bets:
@@ -100,9 +101,5 @@ for page in pages:
                 bets_list.append(formatted_bet)
 bets_list.sort(key=sortByEffective, reverse=True)
 
-if len(bets_list) > 0:
-    subject = f'Bets - Zawód typer - {datetime.now().strftime("%d-%m-%Y %H:%M")}'
-    bets_message = ""
-    for bet in bets_list:
-        bets_message += f"<tr><td>{bet.get('effective')}</td><td>{bet.get('author')}</td><td>{bet.get('dyscipline')}</td><td>{bet.get('prediction')}</td><td>{bet.get('match')}</td><td>{bet.get('start')}</td><td>{bet.get('odds')}</td><td>{bet.get('bukmacher')}</td></tr></tr><tr><td colspan='9'>{bet.get('content')}</td></tr>"
-    send_mail(subject, bets_message)
+df = pd.DataFrame(bets_list)
+df.to_csv('csv/zt.csv', index=False)

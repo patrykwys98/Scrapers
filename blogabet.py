@@ -10,7 +10,7 @@ import pandas as pd
 sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
                      "boxing", "golf", "chess", "cricket", "trotting", "other", 'table-tennis'
                      #"volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
-                     # "darts", "combo-pick", "e-sports",
+                     #"darts", "combo-pick", "e-sports",
                      #  "basketball",
                      ]
 
@@ -29,7 +29,7 @@ now = datetime.now().time().strftime("%H:%M")
 now = time(int(now[:2]), int(now[3:]), 0)
 
 soup = scrap_with_render("https://blogabet.com/tips/", session=s,
-                         sleep=10, timeout=70,
+                         timeout=70,
                          ip=random.choice(proxies))
 
 all_links = soup.find_all("a", href=True)
@@ -67,7 +67,7 @@ for link in links_to_scrap:
     print("Changing proxy ")
     try:
         soup = scrap_with_render(
-            link, session=s, sleep=random.randint(1, 5), wait=2, ip=random.choice(proxies))
+            link, session=s, wait=2, ip=random.choice(proxies))
         print("Rendering")
     except:
         continue
@@ -130,7 +130,7 @@ for link in links_to_scrap:
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
                                               "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[:2]), "start_time": bet_start_time.strftime("%H:%M"), "stake": stake})
-                            print("Added Today Bet", start)
+                            print("Added Today Bet", bet_start_time)
                         else:
                             continue
                     elif str(tomorrow) in start:
@@ -167,13 +167,5 @@ for bet in bets_list:
         else:
             continue
 
-df = pd.DataFrame(live_urls)
-df.to_csv("live_urls.csv", index=False)
-
-if len(bets_to_send) > 0:
-    subject = f'Bets - Blogabet- {datetime.now().strftime("%d-%m-%Y %H:%M")}'
-    message_to_send = ""
-    for bet in bets_to_send:
-        message_to_send += f"<tr><td>{bet.get('username')}</td><td>{bet.get('user_yield')}</td><td>{bet.get('event')}</td><td>{bet.get('pick')}</td><td>{bet.get('odd')}</td><td>{bet.get('stake')}</td><td>{bet.get('start')}</td></tr>"
-
-send_mail(subject, message_to_send)
+df = pd.DataFrame(bets_to_send)
+df.to_csv("csv/blogabet.csv", index=False)
