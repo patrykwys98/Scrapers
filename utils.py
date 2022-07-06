@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 from dotenv import load_dotenv, find_dotenv
 
 
-def scrap_with_render(url, session, timeout=70, sleep=0, wait=0.2, ip=None):
+def scrap_with_render(url, session, timeout=70, sleep=2, wait=2, ip=None):
     try:
         s = session
         r = s.get(url, proxies={f"http": f"{ip}"})

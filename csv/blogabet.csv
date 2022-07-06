@@ -1,22 +1,30 @@
-event,pick,username,user_yield,odd,start,stake,start_time
-Grigor Dimitrov - Cameron Norrie,Cameron Norrie ML (FT),renzolo8,+43%(95),1.774,"Tennis / ATP  13 Jun 2022, 08:00",3/10,
-New York Liberty Women - Chicago Sky Women,New York Liberty Women +7 AH (FT),a  nba wizard,+34%(69),1.951,"Basketball / WNBA  12 Jun 2022, 20:00",10/10,20:00
-Arnett Gardens - Waterhouse,Waterhouse - Draw (Half Time Full Time),Lajos,+22%(250),17,"Football / Jamaica  12 Jun 2222, 22:00",1/10,22:00
-Arnett Gardens - Waterhouse,Arnett Gardens - Draw (Half Time Full Time),Lajos,+22%(250),17,"Football / Jamaica  12 Jun 2222, 22:00",1/10,22:00
-españa vs republica checa,soucek 35 pases o mas,isonemybet,+21%(2042),8,"Football / UEFA EURO  12 Jun 2022, 23:00",1/10,23:00
-The Strongest - Bolivar,Bolivar (Draw No Bet),AmericanInfo2.0,+20%(65),2.1,"Football / Bolivia  12 Jun 2222, 22:00",8/10,22:00
-Envigado FC - CD La Equidad Seguros,CD La Equidad Seguros 1X2 (FT),AmericanInfo2.0,+20%(65),2.428,"Football / Colombia  12 Jun 2222, 22:00",7/10,22:00
-Anadolu Efes - Fenerbahce,Fenerbahce Money Line (Game Lines),NostraBetmus,+20%(51),2.85,"Basketball / Turkey  13 Jun 2022, 17:30",1/10,
-Al Ahly Cairo - Al Masry Salloum,"Al Masry Salloum +2.0, +2.5 (Asian Handicap)",Tintin Bet,+20%(360),1.8,"Football / Egypt  12 Jun 2022, 21:00",1/10,21:00
-Montego Bay Utd - Vere United,Over 2.5 (Goals Over Under),vitisport,+19%(95),2.7,"Football / Jamaica  12 Jun 2222, 22:00",10/10,22:00
-Molynes United FC - Humble Lions,Over 2.5 (Goals Over Under),vitisport,+19%(95),2,"Football / Jamaica  12 Jun 2222, 22:00",10/10,22:00
-Australia - Peru,Peru (Full Time Result),GreekMaster,+17%(196),1.83,"Football / WC Qual.  13 Jun 2022, 18:00",8/10,
-Palermo - Padova,Draw (Full Time Result),Miegaz,+16%(51),3,"Football / Ita. Serie C  12 Jun 2022, 21:15",10/10,21:15
-Sierra Leone - Guinea-Bissau,Draw or Guinea-Bissau (Double Chance),African  Arabic,+14%(663),1.83,"Football / Africa  13 Jun 2022, 16:00",1/10,
-Morocco - Liberia,Morocco Over 2.5 (Team Total Goals),African  Arabic,+14%(663),1.83,"Football / Africa  13 Jun 2022, 19:00",1/10,
-England XI - Rest of the World XI,Draw 4-4 (Correct Score),Cascarino,+11%(528),29,"Football / Friendly  12 Jun 2022, 20:30",1/10,20:30
-EA7 Emporio Armani Milano - Virtus Pallacanestro Bologna (Canadian Solar),Virtus Pallacanestro Bologna (Canadian Solar) +1 AH (FT),Royal-Wetten,+10%(652),2.439,"Basketball / Italy SeriaA  12 Jun 2022, 20:30",1/10,20:30
-Lagomar Women - Defensor Sporting Women,Defensor Sporting Women Spread -16.5 (Game Lines),Andrés Haberlin,+10%(267),1.83,"Basketball / Uruguay  13 Jun 2022, 22:30",7/10,
-Remeros de Mercedes Women - Malvin Women,Malvin Women Spread -9.5 (Game Lines),Andrés Haberlin,+10%(267),1.83,"Basketball / Uruguay  12 Jun 2022, 21:00",10/10,21:00
-Mtibwa Sugar - Ruvu Shooting,Draw (Full Time Result),Gladiator tips,+10%(193),2.63,"Football / Tanzania  13 Jun 2022, 11:00",1/10,
-Anadolu Efes SK - Fenerbahçe SK,Fenerbahçe SK +6 AH (FT),Carlosm245,+10%(1090),1.908,"Basketball / Turkey  13 Jun 2022, 17:30",2/10,
+event,pick,username,user_yield,odd,start,start_time,stake,tips_count,tips_effective
+Luis Diego Chavez Villalpando - Daniel Merida Aguilar,Luis Diego Chavez Villalpando (First Set Winner),duddle75,+63%(221),6.5,"Tennis / ITF  06 Jul 2022, 17:30",17:30,1,221,+63
+Shijiazhuang Gongfu FC - Qingdao Youth Island,Shijiazhuang Gongfu FC (Full Time Result),bwinner,+24%(177),3.8,"Football / China  07 Jul 2022, 08:00",,5,177,+24
+Las Vegas Aces Women - New York Liberty Women,Las Vegas Aces Women -12 AH (FT),a  nba wizard,+22%(118),2.218,"Basketball / WNBA  07 Jul 2022, 02:00",,10,118,+22
+Atlanta Dream Women - Washington Mystics Women,Washington Mystics Women -5 AH (FT),a  nba wizard,+22%(118),1.924,"Basketball / WNBA  07 Jul 2022, 00:00",,10,118,+22
+Minnesota Lynx Women - Chicago Sky Women,Chicago Sky Women -3 AH (FT),a  nba wizard,+22%(118),1.96,"Basketball / WNBA  06 Jul 2022, 19:00",19:00,10,118,+22
+A1 Challenge Women - JKL Lady Dolphins Women,A1 Challenge Women Spread +34.5 (Game Lines),Killshot365,+20%(421),1.83,"Basketball / Uganda   06 Jul 2022, 17:30",17:30,5,421,+20
+Ghazl El Mehalla - Coca Cola FC,Ghazl El Mehalla +0.25 AH (FT),Ameer,+18%(110),2.069,"Football / Egypt  07 Jul 2022, 19:30",,10,110,+18
+FC Ma'an - Sahab SC,FC Ma'an +0.5 AH (FT),Ameer,+18%(110),1.916,"Football / Jordan  06 Jul 2022, 19:30",19:30,10,110,+18
+Universitatea Craiova - Al Duhail,Universitatea Craiova (Full Time Result),Ferrari ✅,+16%(5376),2.38,"Football / Friendly  06 Jul 2022, 18:00",18:00,3,5376,+16
+XV Piracicaba U20 - Ponte Preta SP U20,Over 10 (Asian Total Corners),Cornerjourney,+15%(445),1.9,"Football / Brazil  06 Jul 2022, 20:00",20:00,1,445,+15
+Al Wehdat - Shabab Al Hussein,Al Wehdat 3-0 (Correct Set Score),Saporo,+14%(104),2.75,"Volleyball / Jordan   06 Jul 2022, 18:00",18:00,6,104,+14
+Al Wehdat - Shabab Al Hussein,Al Wehdat Handicap - Sets -1.5 (Game Lines),Saporo,+14%(104),1.61,"Volleyball / Jordan   06 Jul 2022, 18:00",18:00,10,104,+14
+Molde - FK Jerv,Molde - Molde (Half Time Full Time),Tipway,+14%(102),1.62,"Football / Norway  06 Jul 2022, 19:00",19:00,5,102,+14
+Shijiazhuang Gongfu FC - Qingdao Youth Island,Shijiazhuang Gongfu FC (Draw No Bet),Yami Bakura,+13%(834),2.2,"Football / China  07 Jul 2022, 08:00",,10,834,+13
+Kichenok/Ostapenko - Krejcikova/Siniakova,No Win in Straight Sets (Krejcikova Siniakova To),TinchoCARC,+13%(1378),1.9,"Tennis / Doubles  07 Jul 2022, 10:00",,2,1378,+13
+Finger Lakes Carrera 6,Eudaimonia,Hotei,+13%(136),2.62,"Horse Racing / USA  06 Jul 2022, 23:25",23:25,1,136,+13
+Thistledown Carrera 4,Jail House Code,Hotei,+13%(136),2.37,"Horse Racing / USA  06 Jul 2222, 22:22",22:20,1,136,+13
+Thistledown Carrera 1,Mustang Willie,Hotei,+13%(136),2.2,"Horse Racing / USA  06 Jul 2022, 20:50",20:50,1,136,+13
+Delaware Park Carrera 1,Dreams Delivered,Hotei,+13%(136),2.62,"Horse Racing / USA  06 Jul 2022, 20:30",20:30,1,136,+13
+Jakub Joksch - Radek Fnukal,Total O 75.5 (Match Lines),Teble Tannis,+12%(232),1.83,"Table tennis / Other  06 Jul 2022, 18:00",18:00,3,232,+12
+SVG Bleiburg - Wolfsberger AC (A),Over 2.0 (1st Half Goal Line),Castetips,+11%(366),1.78,"Football / Friendly  06 Jul 2022, 18:30",18:30,4,366,+11
+BSG Chemie Leipzig - FC Blau-Weiss Leipzig,BSG Chemie Leipzig -1.0 (1st Half Asian Handicap),Castetips,+11%(366),1.75,"Football / Friendly  06 Jul 2022, 18:30",18:30,4,366,+11
+Shijiazhuang Yongchang Junhao - Shenzhen Ruby FC,Shijiazhuang Yongchang Junhao 1X2 (FT),Public Domain,+10%(606),3.149,"Football / China  07 Jul 2022, 11:30",,1,606,+10
+Beijing Guoan FC - Meizhou Kejia,Meizhou Kejia 1X2 (FT),Public Domain,+10%(606),2.609,"Football / China  07 Jul 2022, 09:30",,1,606,+10
+Stone Esports vs River Plate Gaming,Stone Esports (+1.5) (Map handicap),bartis,+10%(341),1.74,"E Sports / Other  07 Jul 2022, 00:00",,5,341,+10
+Stone Esports vs River Plate Gaming,Stone Esports (+1.5) (Map handicap),bartis,+10%(341),1.74,"E Sports / Other  07 Jul 2022, 00:00",,10,341,+10
+ROMANOS vs Windingo,ROMANOS (-1.5) (Map handicap),bartis,+10%(341),1.86,"E Sports / Other  07 Jul 2022, 21:00",,10,341,+10
+Isurus Gaming vs Holkattes,2:0 (Correct map score),bartis,+10%(341),1.96,"E Sports / Other  06 Jul 2022, 23:00",23:00,10,341,+10
+Championnat d'Europe (F),Qualification Belgique ( F),NeptunePronostic,+10%(141),3.5,"Football / UEFA EURO  31 Jul 2022, 11:57",,5,141,+10

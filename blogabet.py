@@ -1,18 +1,31 @@
 import random
 from datetime import time
 from datetime import date, datetime
+import os
+from tomli import load
 from get_proxies import get_proxies, get_proxies_with_proxy
 from utils import scrap_with_render, send_mail, remove_duplicates
 from requests_html import HTMLSession
 import pandas as pd
+import requests
+import time as t
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
+
+sports_to_exclude = [  # "aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
+    #"boxing", "golf", "chess", "cricket", "trotting", "other", 'table-tennis'
+    #"volleyball", "tennis", "snooker", "handball", "ice-hockey", "baseball",
+    #"darts", "combo-pick", "e-sports", "mma", "motor-sports", "water-polo", "volleyball",
+    #"basketball", "am-football", "futsal",
+    # "football",
 
 
-sports_to_exclude = ["aussie-rules", "rugby-union", "badminton", "cycling", "horse-racing", "rugby-league",
-                     "boxing", "golf", "chess", "cricket", "trotting", "other", 'table-tennis'
-                     #"volleyball", "tennis", "snooker", "handball", "football", "ice-hockey", "baseball",
-                     #"darts", "combo-pick", "e-sports",
-                     #  "basketball",
-                     ]
+    #"1203", "47", "125", "214", "196", "330", "84", "209", "70", "736", "188", "126", "189",
+    #  "71", "72", "74", "313", "78", "79", "179", "239", "127", "93", "308", "153", "104", "279",
+    #  "338", "192", "29", "31", "229", "320", "321", "35", "28", "1", "37", "232", "201", "8", "55",
+
+]
 
 
 def sortByYield(row):
@@ -92,7 +105,7 @@ for link in links_to_scrap:
                 if tips_effective[0] == "-" or tips_effective[0] == "0" or tips_effective[0] == "+0" or username == "":
                     continue
                 else:
-                    if int(tips_effective.replace("+", "")) < 10 or int(tips_count) < 50:
+                    if int(tips_effective.replace("+", "")) < 7 or int(tips_count) < 90:
                         continue
 
                 odd = b.find("span", class_="feed-odd").text.strip()
@@ -129,19 +142,19 @@ for link in links_to_scrap:
                             start_time[0]) < 22 else int(start_time[0])-22, int(start_time[1]), 0)
                         if bet_start_time > now:
                             bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                              "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[:2]), "start_time": bet_start_time.strftime("%H:%M"), "stake": stake})
+                                              "odd": odd, "start": start.replace(str(start_time[0]), str(bet_start_time)[:2]), "start_time": bet_start_time.strftime("%H:%M"), "stake": stake[:stake.find("/")], "tips_count": tips_count, "tips_effective": tips_effective})
                             print("Added Today Bet", bet_start_time)
                         else:
                             continue
                     elif str(tomorrow) in start:
                         bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                          "odd": odd, "start": start, "stake": stake})
+                                          "odd": odd, "start": start, "stake": stake[:stake.find("/")], "tips_count": tips_count, "tips_effective": tips_effective})
                         print("Added Tomorrow Bet", start)
                     else:
                         continue
             else:
                 bets_list.append({"event": event, "pick": pick, "username": username, "user_yield": user_yield,
-                                  "odd": odd, "start": start, "stake": stake})
+                                  "odd": odd, "start": start, "stake": stake[:stake.find("/")], "tips_count": tips_count, "tips_effective": tips_effective})
                 print("Added Combo Bet", start)
 
 print("Start sorting links")
@@ -166,6 +179,39 @@ for bet in bets_list:
             print("Tomorrow added", bet['start'])
         else:
             continue
+
+
+print("Start sending bets")
+endpoint = os.environ.get("ENDPOINT")
+
+
+for bet in bets_to_send:
+    formated_start = bet['start']
+    formated_start = formated_start.strip().replace(" ", "")
+    comma_location = formated_start.find(",")
+    formated_start = formated_start.replace(",", "")
+    start_time = formated_start[comma_location:]
+    start_date = formated_start[:comma_location].replace("Jul", "05")
+
+    start_date = start_date[len(start_date)-8:]
+
+    day = start_date[:2]
+    month = start_date[2:4]
+    year = start_date[4:8]
+
+    start_time = start_time.split(":")
+    hour = start_time[0]
+    minute = start_time[1]
+
+    dyscipline = formated_start[:formated_start.find(str(day))]
+
+    response = requests.post(
+        endpoint, json={"event": str(bet['event']), "pick": str(bet['pick']), "author_name": str(bet['username']),
+                        "author_yield": int(bet['tips_effective']), "odd": float(bet['odd']),
+                        "start": f"{year}-{month}-{day}T{hour}:{minute}", "dyscipline_name": dyscipline,
+                        "stake": int(bet['stake']), "author_odds": int(bet['tips_count'])})
+    print(response.status_code)
+    t.sleep(1)
 
 df = pd.DataFrame(bets_to_send)
 df.to_csv("csv/blogabet.csv", index=False)
