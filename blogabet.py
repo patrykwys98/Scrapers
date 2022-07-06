@@ -3,7 +3,7 @@ from datetime import time
 from datetime import date, datetime
 import os
 from get_proxies import get_proxies, get_proxies_with_proxy
-from utils import scrap_with_render, send_mail, remove_duplicates
+from utils import scrap_with_render, remove_duplicates
 from requests_html import HTMLSession
 import pandas as pd
 import requests
@@ -40,9 +40,13 @@ tomorrow = today + 1
 now = datetime.now().time().strftime("%H:%M")
 now = time(int(now[:2]), int(now[3:]), 0)
 
+try:
+    ip = random.choice(proxies)
+except:
+    ip = ""
 soup = scrap_with_render("https://blogabet.com/tips/", session=s,
                          timeout=70,
-                         ip=random.choice(proxies))
+                         ip=ip)
 
 all_links = soup.find_all("a", href=True)
 live_urls = []
@@ -71,12 +75,15 @@ for link in links_to_scrap:
     print("Checking link: " + link)
     i += 1
     if i > 15:
-        proxy = random.choice(proxies)
+        try:
+            proxy = random.choice(proxies)
+        except:
+            proxy = ""
         proxies = get_proxies_with_proxy(s, proxy)
         print("Getting new proxies")
         i = 0
-        del proxy
-    print("Changing proxy ")
+        print("Changing proxy ")
+
     try:
         soup = scrap_with_render(
             link, session=s, wait=2, ip=random.choice(proxies))
