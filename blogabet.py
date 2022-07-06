@@ -2,7 +2,6 @@ import random
 from datetime import time
 from datetime import date, datetime
 import os
-from tomli import load
 from get_proxies import get_proxies, get_proxies_with_proxy
 from utils import scrap_with_render, send_mail, remove_duplicates
 from requests_html import HTMLSession
